@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EZO SUMMARY</title>
     <style>
-        /* Sade siyah tema */
         body {
             background: #0a0a0a;
             color: #e0e0e0;
@@ -246,7 +245,6 @@
         </header>
 
         <div class="content">
-            <!-- Sol panel -->
             <div class="panel">
                 <h2>Metin Girişi</h2>
                 <div class="counter">
@@ -265,8 +263,6 @@
                     <p>İşleniyor...</p>
                 </div>
             </div>
-
-            <!-- Sağ panel -->
             <div class="panel">
                 <h2>Özet Sonucu</h2>
                 <div class="counter">
@@ -309,16 +305,12 @@
             const pdfBtn = document.getElementById('pdfBtn');
             const copyBtn = document.getElementById('copyBtn');
             const loading = document.getElementById('loading');
-
-            // Karakter sayacı
             textInput.addEventListener('input', function() {
                 const length = textInput.value.length;
                 charCounter.textContent = length + '/5000 karakter';
                 charCounter.style.color = length > 5000 ? '#ff4444' : 
                                          length < 50 ? '#ff9800' : '#4a9eff';
             });
-
-            // Temizle
             clearBtn.addEventListener('click', function() {
                 textInput.value = '';
                 charCounter.textContent = '0/5000 karakter';
@@ -328,8 +320,6 @@
                 pdfBtn.disabled = true;
                 copyBtn.disabled = true;
             });
-
-            // Özetle
             summarizeBtn.addEventListener('click', async function() {
                 const text = textInput.value.trim();
                 
@@ -388,7 +378,7 @@
                 }
             });
 
-            // PDF oluştur
+            // PDF Oluşturma
             async function createPdf(original, summary) {
                 pdfBtn.disabled = true;
                 const originalText = pdfBtn.textContent;
@@ -423,4 +413,5 @@
         });
     </script>
 </body>
+
 </html>
