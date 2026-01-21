@@ -10,14 +10,12 @@ from werkzeug.utils import secure_filename
 # Flask başlat
 app = Flask(__name__)
 
-# PDF kayıt klasörü
+# Kayıt İçin
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
-# Klasör yoksa oluştur
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# Basit Türkçe özetleme
 def turkce_ozetle(metin, cumle_sayisi=3):
     # Noktalama ile cümle ayır
     cumleler = []
@@ -32,7 +30,7 @@ def turkce_ozetle(metin, cumle_sayisi=3):
     if gecici:
         cumleler.append(gecici.strip())
     
-    # İlk cümleleri al
+    # İlk Cümleleri Alması İçin
     ozet = cumleler[:min(cumle_sayisi, len(cumleler))]
     return ' '.join(ozet)
 
@@ -49,18 +47,16 @@ def ozetle():
         data = request.get_json()
         metin = data.get('metin', '')
         
-        # Boş mu kontrol
         if not metin:
             return jsonify({'hata': 'Metin gerekli'}), 400
         
-        # Temizle ve kontrol
         metin = metin.strip()
         if len(metin) < 50:
             return jsonify({'hata': 'En az 50 karakter'}), 400
         if len(metin) > 5000:
             return jsonify({'hata': 'En fazla 5000 karakter'}), 400
         
-        # Cümle sayısını ayarla
+        # Cümle sayısı
         cumle_sayisi = max(2, len(metin) // 500)
         cumle_sayisi = min(cumle_sayisi, 5)
         
@@ -72,7 +68,7 @@ def ozetle():
     except Exception as e:
         return jsonify({'hata': str(e)}), 500
 
-# Türkçe karakterleri ASCII'ye çevir
+# Türkçe karakter-ASCII
 def turkce_to_ascii(text):
     replacements = {
         'ı': 'i', 'İ': 'I', 'ğ': 'g', 'Ğ': 'G',
@@ -94,39 +90,31 @@ def pdf_olustur():
         if not orijinal or not ozet:
             return jsonify({'hata': 'PDF için metin gerekli'}), 400
         
-        # Benzersiz dosya adı
+        
         dosya_adi = str(uuid.uuid4())[:8] + "_ozet.pdf"
         dosya_yolu = os.path.join(app.config['UPLOAD_FOLDER'], dosya_adi)
         
-        # PDF oluştur
+        # PDF 
         doc = SimpleDocTemplate(dosya_yolu, pagesize=letter)
         styles = getSampleStyleSheet()
         icerik = []
         
-        # Başlık stili
         styles['Heading1'].fontSize = 16
-        styles['Heading1'].alignment = 1  # Ortala
+        styles['Heading1'].alignment = 1  
         
         styles['Heading2'].fontSize = 12
         styles['Heading2'].spaceBefore = 12
         
         styles['Normal'].fontSize = 10
         styles['Normal'].leading = 14
-        
-        # Türkçe karakterleri ASCII'ye çevir
         orijinal_ascii = turkce_to_ascii(orijinal)
         ozet_ascii = turkce_to_ascii(ozet)
-        
-        # Başlık
         baslik = Paragraph("EZO SUMMARY - OZET RAPORU", styles['Heading1'])
         icerik.append(baslik)
         icerik.append(Paragraph("<br/><br/>", styles['Normal']))
-        
-        # Orijinal metin başlığı
         icerik.append(Paragraph("ORIJINAL METIN:", styles['Heading2']))
         icerik.append(Paragraph("<br/>", styles['Normal']))
         
-        # Orijinal metni paragraflara ayır
         orijinal_paragraflar = orijinal_ascii.split('\n')
         for p in orijinal_paragraflar:
             if p.strip():
@@ -134,22 +122,17 @@ def pdf_olustur():
                 icerik.append(Paragraph("<br/>", styles['Normal']))
         
         icerik.append(Paragraph("<br/>", styles['Normal']))
-        
-        # Özet başlığı
         icerik.append(Paragraph("OZET:", styles['Heading2']))
         icerik.append(Paragraph("<br/>", styles['Normal']))
-        
-        # Özet metnini ekle
         ozet_paragraflar = ozet_ascii.split('. ')
         for p in ozet_paragraflar:
             if p.strip():
-                # Nokta ekle (split sırasında kayboldu)
                 if not p.strip().endswith('.'):
                     p = p.strip() + '.'
                 icerik.append(Paragraph(p, styles['Normal']))
                 icerik.append(Paragraph("<br/>", styles['Normal']))
         
-        # PDF'yi kaydet
+        # PDF Olarak Kaydet
         doc.build(icerik)
         
         return jsonify({'pdf_url': f'/pdf_indir/{dosya_adi}'})
@@ -172,8 +155,8 @@ def pdf_indir(dosya_adi):
     except Exception as e:
         return str(e), 500
 
-# Uygulamayı çalıştır
 if __name__ == '__main__':
     print("EZO SUMMARY başlatılıyor...")
     print("Adres: http://localhost:5000")
+
     app.run(debug=True, host='0.0.0.0', port=5000)
