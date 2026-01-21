@@ -1,6 +1,5 @@
-// Sayfa yüklendiğinde çalışacak kodlar
 document.addEventListener('DOMContentLoaded', function() {
-    // HTML elementlerini seç
+  
     const inputText = document.getElementById('inputText');
     const charCount = document.getElementById('charCount');
     const summarizeBtn = document.getElementById('summarizeBtn');
@@ -9,14 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const summaryLength = document.getElementById('summaryLength');
     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
     const copyBtn = document.getElementById('copyBtn');
-    const loading = document.getElementById('loading');
-
-    // Karakter sayacını güncelle
+    const loading = document.getElementById('loading'); 
     inputText.addEventListener('input', function() {
         const length = inputText.value.length;
         charCount.textContent = `${length}/5000 karakter`;
-        
-        // 5000 karakterden fazlaysa uyarı
         if (length > 5000) {
             charCount.style.color = '#ff4444';
         } else if (length < 50) {
@@ -25,8 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
             charCount.style.color = '#667eea';
         }
     });
-
-    // Temizle butonu
     clearBtn.addEventListener('click', function() {
         inputText.value = '';
         charCount.textContent = '0/5000 karakter';
@@ -36,12 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadPdfBtn.disabled = true;
         copyBtn.disabled = true;
     });
-
-    // Özetle butonu
     summarizeBtn.addEventListener('click', async function() {
         const text = inputText.value.trim();
-        
-        // Validasyon kontrolleri
         if (text.length < 50) {
             alert('Lütfen en az 50 karakter girin!');
             return;
@@ -51,13 +40,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Metin en fazla 5000 karakter olabilir!');
             return;
         }
-
-        // Yükleme göster
         loading.style.display = 'block';
         summarizeBtn.disabled = true;
 
         try {
-            // Sunucuya istek gönder
             const response = await fetch('/summarize', {
                 method: 'POST',
                 headers: {
@@ -69,43 +55,29 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok) {
-                // Başarılı ise özeti göster
                 displaySummary(text, data.summary);
             } else {
-                // Hata durumunda
                 alert('Hata: ' + (data.error || 'Bilinmeyen bir hata oluştu'));
             }
         } catch (error) {
             alert('Bağlantı hatası: ' + error.message);
         } finally {
-            // Yükleme gizle
             loading.style.display = 'none';
             summarizeBtn.disabled = false;
         }
     });
-
-    // Özeti ekranda göster
     function displaySummary(original, summary) {
-        // Özeti göster
         resultBox.innerHTML = `<p>${summary}</p>`;
         summaryLength.textContent = `Özet: ${summary.length} karakter`;
-        
-        // Butonları aktif et
         downloadPdfBtn.disabled = false;
-        copyBtn.disabled = false;
-        
-        // PDF indirme butonuna tıklama
+        copyBtn.disabled = false; 
         downloadPdfBtn.onclick = function() {
             downloadAsPdf(original, summary);
         };
-        
-        // Kopyala butonuna tıklama
         copyBtn.onclick = function() {
             copyToClipboard(summary);
         };
     }
-
-    // PDF oluşturma fonksiyonu
     async function downloadAsPdf(original, summary) {
         downloadPdfBtn.disabled = true;
         downloadPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PDF Oluşturuluyor...';
@@ -125,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok) {
-                // PDF'yi indir
+                // PDF Olarak indirmek için
                 window.open(data.pdf_url, '_blank');
             } else {
                 alert('PDF oluşturma hatası: ' + (data.error || 'Bilinmeyen hata'));
@@ -137,12 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadPdfBtn.innerHTML = '<i class="fas fa-download"></i> PDF İndir';
         }
     }
-
-    // Panoya kopyalama fonksiyonu
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text)
             .then(() => {
-                // Başarılı mesajı
                 const originalText = copyBtn.innerHTML;
                 copyBtn.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
                 copyBtn.style.background = '#4CAF50';
@@ -159,4 +128,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Başlangıç ayarları
     charCount.textContent = '0/5000 karakter';
+
 });
