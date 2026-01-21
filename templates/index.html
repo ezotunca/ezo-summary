@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZO SUMMARY</title>
+    <style>
+        /* Sade siyah tema */
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #999;
+            margin: 0;
+        }
+        
+        .content {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+        }
+        
+        .panel {
+            flex: 1;
+            background: #111;
+            border-radius: 8px;
+            padding: 30px;
+            border: 1px solid #222;
+        }
+        
+        .panel h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin: 0 0 20px 0;
+            color: #fff;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .counter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .counter span:first-child {
+            color: #4a9eff;
+            font-weight: 500;
+        }
+        
+        .counter span:last-child {
+            color: #777;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 300px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #444;
+            background: #1c1c1c;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .button.primary {
+            background: #2a2a2a;
+            color: #fff;
+        }
+        
+        .button.primary:hover {
+            background: #333;
+        }
+        
+        .button.secondary {
+            background: #1a1a1a;
+            color: #ccc;
+            border: 1px solid #333;
+        }
+        
+        .button.secondary:hover {
+            background: #222;
+        }
+        
+        .button.success {
+            background: #1a3a1a;
+            color: #8bc34a;
+            border: 1px solid #2a4a2a;
+        }
+        
+        .button.success:hover {
+            background: #1e421e;
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #333;
+            border-top: 3px solid #4a9eff;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-box {
+            min-height: 300px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 10px;
+            overflow-y: auto;
+        }
+        
+        .placeholder {
+            color: #666;
+            text-align: center;
+            margin-top: 120px;
+            font-style: italic;
+        }
+        
+        .info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            border-left: 3px solid #444;
+        }
+        
+        .info h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0 0 15px 0;
+            color: #ccc;
+        }
+        
+        .info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .info li {
+            padding: 5px 0;
+            color: #999;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .info li:before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: #666;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #666;
+            border-top: 1px solid #222;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>EZO SUMMARY</h1>
+            <p>Metin özetleyici - PDF dönüştürücü</p>
+        </header>
+
+        <div class="content">
+            <!-- Sol panel -->
+            <div class="panel">
+                <h2>Metin Girişi</h2>
+                <div class="counter">
+                    <span id="charCounter">0/5000 karakter</span>
+                    <span>en az 50 karakter</span>
+                </div>
+                <textarea id="textInput" placeholder="Özetlemek istediğiniz metni buraya yazın veya yapıştırın..."></textarea>
+                
+                <div class="buttons">
+                    <button id="summarizeBtn" class="button primary">Metni Özetle</button>
+                    <button id="clearBtn" class="button secondary">Temizle</button>
+                </div>
+                
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>İşleniyor...</p>
+                </div>
+            </div>
+
+            <!-- Sağ panel -->
+            <div class="panel">
+                <h2>Özet Sonucu</h2>
+                <div class="counter">
+                    <span id="resultLength">Özet: 0 karakter</span>
+                </div>
+                <div id="resultBox" class="result-box">
+                    <p class="placeholder">Özet burada görünecek</p>
+                </div>
+                
+                <div class="buttons">
+                    <button id="pdfBtn" class="button success" disabled>PDF İndir</button>
+                    <button id="copyBtn" class="button secondary" disabled>Kopyala</button>
+                </div>
+                
+                <div class="info">
+                    <h3>Kullanım</h3>
+                    <ul>
+                        <li>Metni sol kutuya yazın veya yapıştırın</li>
+                        <li>Metni Özetle butonuna tıklayın</li>
+                        <li>Özeti sağ tarafta görün</li>
+                        <li>PDF olarak indirin veya kopyalayın</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>EZO SUMMARY - Metin özetleyici uygulaması</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            const charCounter = document.getElementById('charCounter');
+            const summarizeBtn = document.getElementById('summarizeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const resultBox = document.getElementById('resultBox');
+            const resultLength = document.getElementById('resultLength');
+            const pdfBtn = document.getElementById('pdfBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const loading = document.getElementById('loading');
+
+            // Karakter sayacı
+            textInput.addEventListener('input', function() {
+                const length = textInput.value.length;
+                charCounter.textContent = length + '/5000 karakter';
+                charCounter.style.color = length > 5000 ? '#ff4444' : 
+                                         length < 50 ? '#ff9800' : '#4a9eff';
+            });
+
+            // Temizle
+            clearBtn.addEventListener('click', function() {
+                textInput.value = '';
+                charCounter.textContent = '0/5000 karakter';
+                charCounter.style.color = '#4a9eff';
+                resultBox.innerHTML = '<p class="placeholder">Özet burada görünecek</p>';
+                resultLength.textContent = 'Özet: 0 karakter';
+                pdfBtn.disabled = true;
+                copyBtn.disabled = true;
+            });
+
+            // Özetle
+            summarizeBtn.addEventListener('click', async function() {
+                const text = textInput.value.trim();
+                
+                if (text.length < 50) {
+                    alert('En az 50 karakter girin');
+                    return;
+                }
+                if (text.length > 5000) {
+                    alert('En fazla 5000 karakter');
+                    return;
+                }
+
+                loading.style.display = 'block';
+                summarizeBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/ozetle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ metin: text })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        resultBox.innerHTML = '<p>' + data.ozet + '</p>';
+                        resultLength.textContent = 'Özet: ' + data.ozet.length + ' karakter';
+                        
+                        pdfBtn.disabled = false;
+                        copyBtn.disabled = false;
+                        
+                        pdfBtn.onclick = function() {
+                            createPdf(text, data.ozet);
+                        };
+                        
+                        copyBtn.onclick = function() {
+                            navigator.clipboard.writeText(data.ozet)
+                                .then(() => {
+                                    const original = copyBtn.textContent;
+                                    copyBtn.textContent = 'Kopyalandı';
+                                    setTimeout(() => {
+                                        copyBtn.textContent = original;
+                                    }, 2000);
+                                });
+                        };
+                    } else {
+                        alert('Hata: ' + (data.hata || 'Bilinmeyen hata'));
+                    }
+                } catch (error) {
+                    alert('Bağlantı hatası: ' + error.message);
+                } finally {
+                    loading.style.display = 'none';
+                    summarizeBtn.disabled = false;
+                }
+            });
+
+            // PDF oluştur
+            async function createPdf(original, summary) {
+                pdfBtn.disabled = true;
+                const originalText = pdfBtn.textContent;
+                pdfBtn.textContent = 'Hazırlanıyor...';
+
+                try {
+                    const response = await fetch('/pdf_olustur', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            orijinal: original,
+                            ozet: summary
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        window.open(data.pdf_url, '_blank');
+                    } else {
+                        alert('PDF hatası: ' + (data.hata || 'Bilinmeyen hata'));
+                    }
+                } catch (error) {
+                    alert('PDF oluşturma hatası: ' + error.message);
+                } finally {
+                    pdfBtn.disabled = false;
+                    pdfBtn.textContent = originalText;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
