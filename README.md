@@ -1,4 +1,4 @@
-Metin Özetleyici
+Metin Özetleyici-
 Flask ile yapılmış metin özetleme web uygulaması.
 Kurulum
 ```bash
