@@ -12,4 +12,4 @@ Kullanım
 Metni yapıştır veya dosya yükle
 "Özetle" butonuna tıkla
 Sonucu gör
-GitHub'a yapıştır, commit et
+
